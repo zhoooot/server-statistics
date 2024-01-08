@@ -1,22 +1,20 @@
-import { FactoryProvider } from "@nestjs/common";
-import Redis from "ioredis";
+import { FactoryProvider, Logger } from '@nestjs/common';
+import Redis from 'ioredis';
+import config from 'src/config';
 
 export const redisClientFactory: FactoryProvider<Redis> = {
-    provide: 'REDIS',
-    useFactory: async () => {
-        const client = new Redis({
-            host: 'localhost',
-            port: 6379,
-        });
-        client.on('connect', () => {
-            console.log('Redis client connected');
-        });
+  provide: 'REDIS',
+  useFactory: async () => {
+    const client = new Redis(config.redisURL);
+    client.on('connect', () => {
+      Logger.log('Redis connected', 'redisClientFactory');
+    });
 
-        client.on('error', (err) => {
-            console.log(`Something went wrong ${err}`);
-        });
+    client.on('error', (err) => {
+      Logger.error('Redis error', err, 'redisClientFactory');
+    });
 
-        return client;
-    },
-    inject: [],
+    return client;
+  },
+  inject: [],
 };

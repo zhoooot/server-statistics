@@ -2,8 +2,7 @@ import { Module } from '@nestjs/common';
 import { StatModule } from './stat/stat.module';
 
 @Module({
-  imports: [StatModule,
-  ],
+  imports: [StatModule],
   controllers: [],
   providers: [],
 })
