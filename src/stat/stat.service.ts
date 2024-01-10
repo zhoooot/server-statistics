@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisRepository } from 'src/redis/redisRepository';
+import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 
 @Injectable()
 export class StatService {
@@ -40,6 +41,11 @@ export class StatService {
     }
   }
 
+  @RabbitSubscribe({
+    exchange: 'user',
+    routingKey: 'user.register',
+    queue: 'user',
+  })
   async updateUserStat() {
     // create if not exists, set expiration 32 days later
     const date = new Date();
@@ -49,6 +55,8 @@ export class StatService {
       await this.redisRepo.expire(date_str, 'user', 32 * 24 * 60 * 60);
     }
     await this.redisRepo.increment(date_str, 'user');
+
+    console.log('user registered');
   }
 
   async getQuizStatFromOneWeek() {
@@ -73,6 +81,11 @@ export class StatService {
     }
   }
 
+  @RabbitSubscribe({
+    exchange: 'quiz',
+    routingKey: 'quiz.create',
+    queue: 'quiz',
+  })
   async updateQuizStat() {
     // create if not exists, set expiration 32 days later
     const date = new Date();
