@@ -16,4 +16,4 @@ RUN npm install -g pnpm && pnpm install --prod
 
 ENV REDIS_URL=
 
-CMD ["node", "dist/index.js"]
+CMD ["pnpm", "start:prod"]
